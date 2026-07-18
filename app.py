@@ -17,5 +17,3 @@ st.write("Dashboard epidemiológico")
 from data_loader import cargar_datos
 
 datos = cargar_datos()
-
-st.write(datos[2020].head())
