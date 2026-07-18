@@ -14,6 +14,7 @@ para Streamlit.
 import numpy as np
 import pandas as pd
 import requests
+import streamlit as st
 
 from shapely.geometry import shape
 
@@ -122,7 +123,7 @@ def escalar_poblacion(poblacion):
 
     return np.sqrt(p/maximo)*40+8
 
-
+@st.cache_data
 def cargar_datos():
 
     df = pd.read_csv(CSV_FILE)
