@@ -17,3 +17,6 @@ st.write("Dashboard epidemiológico")
 from data_loader import cargar_datos
 
 datos = cargar_datos()
+
+
+from maps import crear_mapa
