@@ -209,4 +209,16 @@ def cargar_datos():
         lambda e: centroides[e][1]
     )
 
-datos={}
+    datos={}
+
+    for anio in ANIOS:
+
+        temp=df.copy()
+
+        casos=f"casos_{anio}"
+
+        poblacion=f"poblacion_{anio}"
+
+        tasa=f"tasa_{anio}"
+
+        rr=f"riesgo_relativo_{anio}"
