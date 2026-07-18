@@ -86,6 +86,34 @@ def clasificar_tasa(serie):
     return categorias
 
 
+def clasificar_rr(rr):
+
+    categorias=[]
+
+    for x in rr:
+
+        if x < 0.80:
+
+            categorias.append("Muy bajo")
+
+        elif x < 0.95:
+
+            categorias.append("Bajo")
+
+        elif x <= 1.05:
+
+            categorias.append("Promedio")
+
+        elif x <= 1.20:
+
+            categorias.append("Alto")
+
+        else:
+
+            categorias.append("Muy alto")
+
+    return categorias
+
 
 def cargar_datos():
 
