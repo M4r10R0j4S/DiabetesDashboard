@@ -31,6 +31,25 @@ GEOJSON_URL = (
 
 ANIOS = [2000, 2010, 2020]
 
+NIVEL_TASA={
+
+    "Muy bajo":1,
+    "Bajo":2,
+    "Medio":3,
+    "Alto":4,
+    "Muy alto":5
+
+}
+
+NIVEL_RR={
+
+    "Muy bajo":1,
+    "Bajo":2,
+    "Promedio":3,
+    "Alto":4,
+    "Muy alto":5
+
+}
 
 def clasificar_tasa(serie):
     """
@@ -96,6 +115,14 @@ def clasificar_rr(rr):
 
     return categorias
 
+def escalar_poblacion(poblacion):
+
+    p = poblacion.fillna(0)
+
+    maximo = p.max()
+
+    return np.sqrt(p/maximo)*40+8
+    
 def cargar_datos():
 
     df = pd.read_csv(CSV_FILE)
@@ -181,48 +208,21 @@ def cargar_datos():
     df["lat"] = df["entidad"].map(
         lambda e: centroides[e][1]
     )
+    
+    datos={}
 
-datos={}
-
-NIVEL_TASA={
-
-    "Muy bajo":1,
-    "Bajo":2,
-    "Medio":3,
-    "Alto":4,
-    "Muy alto":5
-
-}
-
-NIVEL_RR={
-
-    "Muy bajo":1,
-    "Bajo":2,
-    "Promedio":3,
-    "Alto":4,
-    "Muy alto":5
-
-}
-
-def escalar_poblacion(poblacion):
-
-    p = poblacion.fillna(0)
-
-    maximo = p.max()
-
-    return np.sqrt(p/maximo)*40+8
 
 for anio in ANIOS:
 
     temp=df.copy()
 
-casos=f"casos_{anio}"
+    casos=f"casos_{anio}"
 
-poblacion=f"poblacion_{anio}"
+    poblacion=f"poblacion_{anio}"
 
-tasa=f"tasa_{anio}"
+    tasa=f"tasa_{anio}"
 
-rr=f"riesgo_relativo_{anio}"
+    rr=f"riesgo_relativo_{anio}"
 
 
 temp["categoria_tasa"]=clasificar_tasa(
