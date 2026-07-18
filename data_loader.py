@@ -31,6 +31,24 @@ GEOJSON_URL = (
 
 ANIOS = [2000, 2010, 2020]
 
+NIVEL_TASA={
+
+    "Muy bajo":1,
+    "Bajo":2,
+    "Medio":3,
+    "Alto":4,
+    "Muy alto":5
+}
+
+NIVEL_RR={
+
+    "Muy bajo":1,
+    "Bajo":2,
+    "Promedio":3,
+    "Alto":4,
+    "Muy alto":5
+}
+
 def cargar_datos():
 
     df = pd.read_csv(CSV_FILE)
