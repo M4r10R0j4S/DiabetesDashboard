@@ -49,3 +49,9 @@ indicador = st.sidebar.radio(
 )
 
 df = datos[anio]
+
+fig = crear_mapa(
+    df,
+    geojson,
+    indicador
+)
