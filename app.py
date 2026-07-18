@@ -24,3 +24,27 @@ datos = dataset["datos"]
 
 geojson = dataset["geojson"]
 
+st.sidebar.header("Filtros")
+
+anio = st.sidebar.selectbox(
+
+    "Seleccione el año",
+
+    [2000,2010,2020]
+
+)
+
+indicador = st.sidebar.radio(
+
+    "Indicador",
+
+    [
+
+        "Tasa de detección",
+
+        "Riesgo relativo"
+
+    ]
+
+)
+
