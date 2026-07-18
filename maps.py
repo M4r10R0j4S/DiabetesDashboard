@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+from config import COLORS_TASA, COLORS_RR
 
 def crear_mapa(df,geojson,indicador):
     
@@ -11,20 +12,6 @@ def crear_mapa(df,geojson,indicador):
         titulo="Tasa de detección"
         
         colorscale = colors_tasa
-
-        colors_tasa=[
-
-            [0.0,"#ffffcc"],
-    
-            [0.25,"#ffeda0"],
-
-            [0.50,"#feb24c"],
-
-            [0.75,"#f03b20"],
-
-            [1.0,"#bd0026"]
-
-        ]
 
         ticktext = [
             "Muy bajo",
@@ -43,20 +30,6 @@ def crear_mapa(df,geojson,indicador):
         titulo="Riesgo relativo"
         
         colorscale = colors_rr
-
-        colors_rr=[
-
-            [0.0,"#006837"],
-
-            [0.25,"#66bd63"],
-
-            [0.50,"#ffffbf"],
-
-            [0.75,"#fdae61"],
-
-            [1.0,"#d73027"]
-
-        ]
 
         ticktext = [
             "Muy bajo",
