@@ -323,6 +323,4 @@ def cargar_datos():
 
         datos[anio]=temp
 
-
-
-
+return datos
