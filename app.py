@@ -48,3 +48,23 @@ indicador = st.sidebar.radio(
 
 )
 
+df = datos[anio]
+
+fig = crear_mapa(
+
+    df,
+
+    geojson,
+
+    indicador
+
+)
+
+st.plotly_chart(
+
+    fig,
+
+    use_container_width=True
+
+)
+
