@@ -114,6 +114,14 @@ def clasificar_rr(rr):
 
     return categorias
 
+def escalar_poblacion(poblacion):
+
+    p = poblacion.fillna(0)
+
+    maximo = p.max()
+
+    return np.sqrt(p/maximo)*40+8
+
 
 def cargar_datos():
 
