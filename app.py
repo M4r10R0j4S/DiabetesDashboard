@@ -1,5 +1,7 @@
 import streamlit as st
 
+from maps import crear_mapa
+
 st.set_page_config(
 
     page_title="Diabetes en México",
@@ -19,4 +21,4 @@ from data_loader import cargar_datos
 datos = cargar_datos()
 
 
-from maps import crear_mapa
+
