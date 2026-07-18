@@ -49,6 +49,44 @@ NIVEL_RR={
     "Muy alto":5
 }
 
+def clasificar_tasa(serie):
+    """
+    Clasifica una serie numérica en 5 niveles
+    utilizando quintiles.
+    """
+
+    q20, q40, q60, q80 = serie.quantile(
+        [0.20,0.40,0.60,0.80]
+    )
+
+    categorias = []
+
+    for valor in serie:
+
+        if valor <= q20:
+
+            categorias.append("Muy bajo")
+
+        elif valor <= q40:
+
+            categorias.append("Bajo")
+
+        elif valor <= q60:
+
+            categorias.append("Medio")
+
+        elif valor <= q80:
+
+            categorias.append("Alto")
+
+        else:
+
+            categorias.append("Muy alto")
+
+    return categorias
+
+
+
 def cargar_datos():
 
     df = pd.read_csv(CSV_FILE)
