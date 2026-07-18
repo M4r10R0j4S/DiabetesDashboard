@@ -223,38 +223,22 @@ def cargar_datos():
 
         rr=f"riesgo_relativo_{anio}"
     
-        temp["categoria_tasa"]=clasificar_tasa(
-
-        temp[tasa]
-
-        )
+        temp["categoria_tasa"]=clasificar_tasa(temp[tasa])
 
         temp["nivel_tasa"]=(
-
             temp["categoria_tasa"]
-
             .map(NIVEL_TASA)
-
         )
 
-        temp["categoria_rr"]=clasificar_rr(
-
-            temp[rr]
-
-        )
+        temp["categoria_rr"]=clasificar_rr(temp[rr])
 
         temp["nivel_rr"]=(
-
             temp["categoria_rr"]
-
             .map(NIVEL_RR)
-
         )
 
         temp["tamano"]=escalar_poblacion(
-
             temp[poblacion]
-
         )
 
         temp["hover_tasa"]=(
@@ -339,9 +323,6 @@ def cargar_datos():
 
         datos[anio]=temp
 
-return {
-    "datos": datos,
-    "geojson": mx_geo
-}
+
 
 
