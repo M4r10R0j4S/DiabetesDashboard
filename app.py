@@ -18,5 +18,9 @@ st.title("🩺 Diabetes en México")
 
 st.write("Dashboard epidemiológico")
 
+dataset = cargar_datos()
 
+datos = dataset["datos"]
+
+geojson = dataset["geojson"]
 
