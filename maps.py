@@ -71,7 +71,7 @@ def crear_mapa(df,geojson,indicador):
 
             marker_line_width=0.8,
 
-            customdata=hover.values.reshape(-1,1),
+            customdata=hover,
 
             hovertemplate="%{customdata}<extra></extra>",
             
