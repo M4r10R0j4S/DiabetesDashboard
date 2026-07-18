@@ -222,3 +222,126 @@ def cargar_datos():
         tasa=f"tasa_{anio}"
 
         rr=f"riesgo_relativo_{anio}"
+    
+        temp["categoria_tasa"]=clasificar_tasa(
+
+        temp[tasa]
+
+        )
+
+        temp["nivel_tasa"]=(
+
+            temp["categoria_tasa"]
+
+            .map(NIVEL_TASA)
+
+        )
+
+        temp["categoria_rr"]=clasificar_rr(
+
+            temp[rr]
+
+        )
+
+        temp["nivel_rr"]=(
+
+            temp["categoria_rr"]
+
+            .map(NIVEL_RR)
+
+        )
+
+        temp["tamano"]=escalar_poblacion(
+
+            temp[poblacion]
+
+        )
+
+        temp["hover_tasa"]=(
+
+            "<b>"+temp["entidad"]+"</b>"
+
+            +"<br><br>"
+
+            +"Casos: "
+
+            +temp[casos].map("{:,.0f}".format)
+
+            +"<br>Población: "
+
+            +temp[poblacion].map("{:,.0f}".format)
+
+            +"<br>Tasa: "
+
+            +temp[tasa].map("{:.2f}".format)
+
+            +"<br><b>Nivel: "
+
+            +temp["categoria_tasa"]
+
+            +"</b>"
+
+        )
+
+        temp["hover_rr"]=(
+
+            "<b>"+temp["entidad"]+"</b>"
+
+            +"<br><br>"
+
+            +"Casos: "
+
+            +temp[casos].map("{:,.0f}".format)
+
+            +"<br>Población: "
+
+            +temp[poblacion].map("{:,.0f}".format)
+
+            +"<br>RR: "
+
+            +temp[rr].map("{:.3f}".format)
+
+            +"<br><b>Nivel: "
+
+            +temp["categoria_rr"]
+
+            +"</b>"
+
+        )
+
+        temp.attrs["stats"]={
+
+            "tasa":{
+
+                "media":temp[tasa].mean(),
+
+                "mediana":temp[tasa].median(),
+
+                "min":temp[tasa].min(),
+
+                "max":temp[tasa].max()
+
+            },
+
+            "rr":{
+
+                "media":temp[rr].mean(),
+
+                "mediana":temp[rr].median(),
+
+                "min":temp[rr].min(),
+
+                "max":temp[rr].max()
+
+            }
+
+        }
+
+        datos[anio]=temp
+
+return {
+    "datos": datos,
+    "geojson": mx_geo
+}
+
+
