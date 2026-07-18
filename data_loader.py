@@ -116,7 +116,3 @@ def cargar_datos():
     df["lat"] = df["entidad"].map(
         lambda e: centroides[e][1]
     )
-    
-    datos={}
-
-
