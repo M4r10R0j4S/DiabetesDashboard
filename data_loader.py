@@ -323,4 +323,7 @@ def cargar_datos():
 
         datos[anio]=temp
 
-    return datos
+    return {
+    "datos": datos,
+    "geojson": mx_geo
+    }
