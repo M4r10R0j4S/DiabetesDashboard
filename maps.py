@@ -11,7 +11,7 @@ def crear_mapa(df,geojson,indicador):
 
         titulo="Tasa de detección"
         
-        colorscale = colors_tasa
+        colorscale = COLORS_TASA
 
         ticktext = [
             "Muy bajo",
@@ -29,7 +29,7 @@ def crear_mapa(df,geojson,indicador):
 
         titulo="Riesgo relativo"
         
-        colorscale = colors_rr
+        colorscale = COLORS_RR
 
         ticktext = [
             "Muy bajo",
@@ -71,9 +71,9 @@ def crear_mapa(df,geojson,indicador):
 
             marker_line_width=0.8,
 
-            customdata=hover,
+            customdata=hover.values.reshape(-1,1),
 
-            hovertemplate="%{customdata}<extra></extra>"
+            hovertemplate="%{customdata}<extra></extra>",
             
             colorbar=dict(
 
