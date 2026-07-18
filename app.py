@@ -55,3 +55,8 @@ fig = crear_mapa(
     geojson,
     indicador
 )
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
