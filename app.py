@@ -1,6 +1,6 @@
 import streamlit as st
 
-from maps import crear_mapa
+#from maps import crear_mapa
 
 from data_loader import cargar_datos
 
