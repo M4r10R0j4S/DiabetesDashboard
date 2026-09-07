@@ -91,7 +91,7 @@ st.sidebar.caption(
 )
 
 st.sidebar.caption(
-    "El índice relativo de tasa de detección compara la tasa cruda de cada entidad con la tasa cruda nacional: Un IRD igual a 1 indica una tasa igual a la nacional; IRD mayor que 1, una tasa superior; y IRD menor que 1, una tasa inferior a la referencia nacional."
+    "El índice relativo de tasa de detección compara la tasa cruda de cada entidad con la tasa cruda nacional. La tasa nacional se calcula a partir de la suma de las detecciones y la suma de los trabajadores afiliados de las 32 entidades, no mediante la suma o promedio de las tasas estatales."
 )
 
 
