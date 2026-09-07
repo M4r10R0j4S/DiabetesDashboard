@@ -86,6 +86,10 @@ st.sidebar.caption(
     "Los círculos representan el número de afiliados al IMSS."
 )
 
+st.sidebar.caption(
+    "Los círculos representan el número de afiliados al IMSS."
+)
+
 
 # ============================================================
 # DATOS DEL AÑO SELECCIONADO
