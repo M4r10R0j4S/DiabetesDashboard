@@ -40,9 +40,9 @@ indicador = st.sidebar.radio(
 
     [
 
-        "Tasa de detección",
+        "Tasa de detección bruta por 100,000 afiliados al IMSS",
 
-        "Riesgo relativo"
+        "Índice de tasa de detección relativa"
 
     ]
 
@@ -60,3 +60,5 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
+
+st.write("Disclaimer")
