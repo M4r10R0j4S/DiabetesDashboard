@@ -48,7 +48,15 @@ indicador = st.sidebar.radio(
 
 )
 
-st.write("Disclaimer")
+st.sidebar.markdown(
+    """
+    **Descripción**
+
+    Seleccione un año y un indicador para explorar
+    la distribución geográfica de la detección de
+    diabetes en México.
+    """
+)
 
 df = datos[anio]
 
