@@ -92,8 +92,8 @@ st.sidebar.caption(
 )
 
 st.sidebar.caption(
-    "El índice relativo de tasa de detección compara la tasa cruda de cada entidad con la tasa cruda nacional del mismo año:Un \(RDRI=1\) indica una tasa igual a la nacional; 
-    \(RDRI>1\), una tasa superior; y \(RDRI<1\), una tasa inferior a la referencia nacional."
+    "El índice relativo de tasa de detección compara la tasa cruda de cada entidad con la tasa cruda nacional del mismo año:Un IRD igual a 1 indica una tasa igual a la nacional; 
+    IRD>1, una tasa superior; y IRD<1, una tasa inferior a la referencia nacional."
 )
 
 
