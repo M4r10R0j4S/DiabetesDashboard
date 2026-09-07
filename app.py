@@ -58,6 +58,10 @@ st.sidebar.markdown(
     """
 )
 
+st.sidebar.caption(
+    "Los círculos representan el tamaño de la población."
+)
+
 df = datos[anio]
 
 fig = crear_mapa(
