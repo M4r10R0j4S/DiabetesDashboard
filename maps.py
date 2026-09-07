@@ -29,7 +29,7 @@ def crear_mapa(df,geojson,indicador):
 
         #titulo="Riesgo relativo"
 
-        titulo="Índice relativo de tasa de detección"
+        titulo="IRD"
         
         colorscale = COLORS_RR
 
