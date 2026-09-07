@@ -27,7 +27,9 @@ def crear_mapa(df,geojson,indicador):
 
         hover=df["hover_rdi"]
 
-        titulo="Riesgo relativo"
+        #titulo="Riesgo relativo"
+
+        titulo="Índice relativo de tasa de detección"
         
         colorscale = COLORS_RR
 
