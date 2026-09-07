@@ -36,9 +36,9 @@ from shapely.geometry import shape
 # CONFIGURACIÓN
 # ============================================================
 
-CSV_CASOS = "data/detectados.csv"
+CSV_CASOS = "detectados.csv"
 
-CSV_AFILIADOS = "data/afiliados.csv"
+CSV_AFILIADOS = "afiliados.csv"
 
 
 GEOJSON_URL = (
