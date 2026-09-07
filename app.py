@@ -48,6 +48,8 @@ indicador = st.sidebar.radio(
 
 )
 
+st.write("Disclaimer")
+
 df = datos[anio]
 
 fig = crear_mapa(
@@ -60,5 +62,3 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
-
-st.write("Disclaimer")
