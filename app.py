@@ -59,9 +59,7 @@ st.sidebar.markdown(
 )
 
 st.sidebar.caption(
-    "**Notas:**
-    
-    Los círculos representan el tamaño de la población."
+    "Los círculos representan el tamaño de la población."
 )
 
 df = datos[anio]
