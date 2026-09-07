@@ -1,70 +1,182 @@
-"""
-=============================================================
-DATA LOADER
+# ============================================================
+# DATA LOADER
+# Diabetes en México - IMSS
+#
+# Archivos de entrada:
+#   detectados.csv
+#   afiliados.csv
+#
+# Periodo utilizado:
+#   2000 - 2020
+#
+# Indicadores:
+#
+#   Tasa bruta =
+#       casos detectados / afiliados * 100000
+#
+#   RDI =
+#       tasa estatal / tasa nacional
+#
+# ============================================================
 
-Dashboard Epidemiológico
-Diabetes en México
 
-Lee el archivo CSV y prepara todos los datos
-para Streamlit.
-
-=============================================================
-"""
+# ============================================================
+# LIBRERÍAS
+# ============================================================
 
 import numpy as np
 import pandas as pd
 import requests
-import streamlit as st
+import unicodedata
 
 from shapely.geometry import shape
 
-# =====================================================
-# CONFIGURACIÓN
-# =====================================================
 
-CSV_FILE = "deteccion_diabetes_resumen_2.csv"
+# ============================================================
+# CONFIGURACIÓN
+# ============================================================
+
+CSV_CASOS = "data/detectados.csv"
+
+CSV_AFILIADOS = "data/afiliados.csv"
+
 
 GEOJSON_URL = (
     "https://raw.githubusercontent.com/"
-    "angelnmara/geojson/master/"
-    "mexicoHigh.json"
+    "angelnmara/geojson/master/mexicoHigh.json"
 )
 
-ANIOS = [2000, 2010, 2020]
 
-NIVEL_TASA={
+# Solo se utilizarán los años 2000 a 2020
 
-    "Muy bajo":1,
-    "Bajo":2,
-    "Medio":3,
-    "Alto":4,
-    "Muy alto":5
-}
+ANIOS = list(range(2000, 2021))
 
-NIVEL_RR={
 
-    "Muy bajo":1,
-    "Bajo":2,
-    "Promedio":3,
-    "Alto":4,
-    "Muy alto":5
-}
+# ============================================================
+# NORMALIZAR TEXTO
+# ============================================================
+
+def normalizar_texto(texto):
+
+    """
+    Normaliza nombres de entidades para poder comparar
+    los nombres de los CSV con los nombres del GeoJSON.
+    """
+
+    texto = str(texto).strip().lower()
+
+    texto = unicodedata.normalize(
+        "NFKD",
+        texto
+    )
+
+    texto = "".join(
+        caracter
+        for caracter in texto
+        if not unicodedata.combining(caracter)
+    )
+
+    texto = " ".join(
+        texto.split()
+    )
+
+    return texto
+
+
+# ============================================================
+# CONVERTIR DATOS NUMÉRICOS
+# ============================================================
+
+def convertir_numerico(serie):
+
+    """
+    Convierte valores como:
+
+    123456
+    123,456
+    "123456 "
+    valores vacíos
+
+    en números.
+    """
+
+    return pd.to_numeric(
+
+        serie
+        .astype(str)
+        .str.replace(",", "", regex=False)
+        .str.replace(" ", "", regex=False)
+        .replace(
+            {
+                "nan": np.nan,
+                "": np.nan,
+                "-": np.nan,
+                "NA": np.nan,
+                "N/A": np.nan
+            }
+        ),
+
+        errors="coerce"
+    )
+
+
+# ============================================================
+# CLASIFICACIÓN DEL RDI
+# ============================================================
+
+def clasificar_rdi(valor):
+
+    if pd.isna(valor):
+
+        return "Sin datos"
+
+    if valor < 0.80:
+
+        return "Muy por debajo del nacional"
+
+    elif valor < 0.95:
+
+        return "Por debajo del nacional"
+
+    elif valor <= 1.05:
+
+        return "Similar al nacional"
+
+    elif valor <= 1.20:
+
+        return "Por encima del nacional"
+
+    else:
+
+        return "Muy por encima del nacional"
+
+
+# ============================================================
+# CLASIFICAR TASA EN CINCO NIVELES
+# ============================================================
 
 def clasificar_tasa(serie):
+
     """
-    Clasifica una serie numérica en 5 niveles
-    utilizando quintiles.
+    Clasifica las tasas estatales utilizando quintiles.
+
+    La clasificación se realiza independientemente
+    para cada año.
     """
 
     q20, q40, q60, q80 = serie.quantile(
-        [0.20,0.40,0.60,0.80]
+        [0.20, 0.40, 0.60, 0.80]
     )
 
     categorias = []
 
     for valor in serie:
 
-        if valor <= q20:
+        if pd.isna(valor):
+
+            categorias.append("Sin datos")
+
+        elif valor <= q20:
 
             categorias.append("Muy bajo")
 
@@ -87,244 +199,797 @@ def clasificar_tasa(serie):
     return categorias
 
 
-def clasificar_rr(rr):
+# ============================================================
+# NIVELES NUMÉRICOS PARA LOS MAPAS
+# ============================================================
 
-    categorias=[]
+NIVEL_TASA = {
 
-    for x in rr:
+    "Muy bajo": 1,
 
-        if x < 0.80:
+    "Bajo": 2,
 
-            categorias.append("Muy bajo")
+    "Medio": 3,
 
-        elif x < 0.95:
+    "Alto": 4,
 
-            categorias.append("Bajo")
+    "Muy alto": 5
+}
 
-        elif x <= 1.05:
 
-            categorias.append("Promedio")
+NIVEL_RDI = {
 
-        elif x <= 1.20:
+    "Muy por debajo del nacional": 1,
 
-            categorias.append("Alto")
+    "Por debajo del nacional": 2,
 
-        else:
+    "Similar al nacional": 3,
 
-            categorias.append("Muy alto")
+    "Por encima del nacional": 4,
 
-    return categorias
+    "Muy por encima del nacional": 5
+}
 
-def escalar_poblacion(poblacion):
 
-    p = poblacion.fillna(0)
+# ============================================================
+# FUNCIÓN PRINCIPAL
+# ============================================================
 
-    maximo = p.max()
-
-    return np.sqrt(p/maximo)*40+8
-
-@st.cache_data
 def cargar_datos():
 
-    df = pd.read_csv(CSV_FILE)
+    # ========================================================
+    # CARGAR CSV
+    # ========================================================
 
-    df = df.dropna(how="all")
+    df_casos = pd.read_csv(
+        CSV_CASOS
+    )
 
-    df = df.dropna(subset=["entidad"])
+    df_afiliados = pd.read_csv(
+        CSV_AFILIADOS
+    )
 
-    df["entidad"] = (
-        df["entidad"]
+
+    # ========================================================
+    # LIMPIAR NOMBRES DE COLUMNAS
+    # ========================================================
+
+    df_casos.columns = (
+        df_casos.columns
         .astype(str)
         .str.strip()
     )
 
-    df = df.rename(columns={
+    df_afiliados.columns = (
+        df_afiliados.columns
+        .astype(str)
+        .str.strip()
+    )
 
-        "Riesgo_Relativo_2010":
-            "riesgo_relativo_2010",
 
-        "Riesgo_Relativo_2020":
-            "riesgo_relativo_2020"
-    })
+    # ========================================================
+    # IDENTIFICAR COLUMNA DE ENTIDAD
+    # ========================================================
 
-    columnas = [
+    if "entidad" not in df_casos.columns:
 
-        c for c in df.columns
-
-        if (
-
-            c.startswith("casos")
-
-            or
-
-            c.startswith("poblacion")
-
-            or
-
-            c.startswith("tasa")
-
-            or
-
-            c.startswith("riesgo_relativo")
-
+        df_casos = df_casos.rename(
+            columns={
+                df_casos.columns[0]:
+                "entidad"
+            }
         )
 
-    ]
 
-    for c in columnas:
+    if "entidad" not in df_afiliados.columns:
 
-        df[c] = (
-
-            df[c]
-
-            .astype(str)
-
-            .str.replace(",", "", regex=False)
-
-            .astype(float)
-
+        df_afiliados = df_afiliados.rename(
+            columns={
+                df_afiliados.columns[0]:
+                "entidad"
+            }
         )
-    
-    mx_geo = requests.get(GEOJSON_URL).json()
+
+
+    # ========================================================
+    # ELIMINAR REGISTROS SIN ENTIDAD
+    # ========================================================
+
+    df_casos = df_casos.dropna(
+        subset=["entidad"]
+    )
+
+    df_afiliados = df_afiliados.dropna(
+        subset=["entidad"]
+    )
+
+
+    # ========================================================
+    # LIMPIAR NOMBRES DE ENTIDAD
+    # ========================================================
+
+    df_casos["entidad"] = (
+        df_casos["entidad"]
+        .astype(str)
+        .str.strip()
+    )
+
+    df_afiliados["entidad"] = (
+        df_afiliados["entidad"]
+        .astype(str)
+        .str.strip()
+    )
+
+
+    # ========================================================
+    # VALIDAR AÑOS
+    # ========================================================
+
+    for anio in ANIOS:
+
+        columna = str(anio)
+
+        if columna not in df_casos.columns:
+
+            raise ValueError(
+                f"No existe la columna {columna} "
+                "en detectados.csv"
+            )
+
+        if columna not in df_afiliados.columns:
+
+            raise ValueError(
+                f"No existe la columna {columna} "
+                "en afiliados.csv"
+            )
+
+
+        # Convertir valores numéricos
+
+        df_casos[columna] = convertir_numerico(
+            df_casos[columna]
+        )
+
+        df_afiliados[columna] = convertir_numerico(
+            df_afiliados[columna]
+        )
+
+
+    # ========================================================
+    # CREAR CLAVE NORMALIZADA
+    # ========================================================
+
+    df_casos["clave_entidad"] = (
+        df_casos["entidad"]
+        .apply(normalizar_texto)
+    )
+
+    df_afiliados["clave_entidad"] = (
+        df_afiliados["entidad"]
+        .apply(normalizar_texto)
+    )
+
+
+    # ========================================================
+    # CONVERTIR CASOS A FORMATO LARGO
+    # ========================================================
+
+    casos_long = df_casos.melt(
+
+        id_vars=[
+            "entidad",
+            "clave_entidad"
+        ],
+
+        value_vars=[
+            str(anio)
+            for anio in ANIOS
+        ],
+
+        var_name="anio",
+
+        value_name="casos"
+    )
+
+
+    casos_long["anio"] = (
+        casos_long["anio"]
+        .astype(int)
+    )
+
+
+    # ========================================================
+    # CONVERTIR AFILIADOS A FORMATO LARGO
+    # ========================================================
+
+    afiliados_long = df_afiliados.melt(
+
+        id_vars=[
+            "entidad",
+            "clave_entidad"
+        ],
+
+        value_vars=[
+            str(anio)
+            for anio in ANIOS
+        ],
+
+        var_name="anio",
+
+        value_name="afiliados"
+    )
+
+
+    afiliados_long["anio"] = (
+        afiliados_long["anio"]
+        .astype(int)
+    )
+
+
+    # ========================================================
+    # UNIR CASOS Y AFILIADOS
+    # ========================================================
+
+    datos = pd.merge(
+
+        casos_long[
+            [
+                "entidad",
+                "clave_entidad",
+                "anio",
+                "casos"
+            ]
+        ],
+
+        afiliados_long[
+            [
+                "clave_entidad",
+                "anio",
+                "afiliados"
+            ]
+        ],
+
+        on=[
+            "clave_entidad",
+            "anio"
+        ],
+
+        how="inner"
+    )
+
+
+    # ========================================================
+    # CALCULAR TASA BRUTA
+    # ========================================================
+
+    datos["tasa"] = np.where(
+
+        datos["afiliados"] > 0,
+
+        (
+            datos["casos"]
+            /
+            datos["afiliados"]
+        )
+        * 100000,
+
+        np.nan
+    )
+
+
+    # ========================================================
+    # CALCULAR DATOS NACIONALES
+    # ========================================================
+
+    nacional = (
+
+        datos
+
+        .groupby(
+            "anio",
+            as_index=False
+        )
+
+        .agg(
+
+            casos_nacional=(
+                "casos",
+                "sum"
+            ),
+
+            afiliados_nacional=(
+                "afiliados",
+                "sum"
+            )
+        )
+    )
+
+
+    # ========================================================
+    # CALCULAR TASA NACIONAL
+    # ========================================================
+
+    nacional["tasa_nacional"] = np.where(
+
+        nacional["afiliados_nacional"] > 0,
+
+        (
+            nacional["casos_nacional"]
+            /
+            nacional["afiliados_nacional"]
+        )
+        * 100000,
+
+        np.nan
+    )
+
+
+    # ========================================================
+    # AGREGAR DATOS NACIONALES
+    # ========================================================
+
+    datos = pd.merge(
+
+        datos,
+
+        nacional,
+
+        on="anio",
+
+        how="left"
+    )
+
+
+    # ========================================================
+    # CALCULAR RDI
+    # ========================================================
+
+    datos["rdi"] = np.where(
+
+        datos["tasa_nacional"] > 0,
+
+        (
+            datos["tasa"]
+            /
+            datos["tasa_nacional"]
+        ),
+
+        np.nan
+    )
+
+
+    # ========================================================
+    # CLASIFICAR RDI
+    # ========================================================
+
+    datos["categoria_rdi"] = (
+        datos["rdi"]
+        .apply(clasificar_rdi)
+    )
+
+
+    datos["nivel_rdi"] = (
+        datos["categoria_rdi"]
+        .map(NIVEL_RDI)
+    )
+
+
+    # ========================================================
+    # DESCARGAR GEOJSON
+    # ========================================================
+
+    respuesta = requests.get(
+        GEOJSON_URL,
+        timeout=30
+    )
+
+    respuesta.raise_for_status()
+
+    mx_geo = respuesta.json()
+
+
+    # ========================================================
+    # NOMBRES DEL GEOJSON
+    # ========================================================
+
+    geo_nombres = {}
+
+    for feature in mx_geo["features"]:
+
+        nombre = (
+            feature["properties"]["name"]
+        )
+
+        clave = normalizar_texto(
+            nombre
+        )
+
+        geo_nombres[clave] = nombre
+
+
+    # ========================================================
+    # EQUIVALENCIAS
+    # ========================================================
+
+    equivalencias = {
+
+        "ciudad de mexico":
+            "distrito federal",
+
+        "cdmx":
+            "distrito federal",
+
+        "estado de mexico":
+            "mexico",
+
+        "coahuila":
+            "coahuila de zaragoza",
+
+        "michoacan":
+            "michoacan de ocampo",
+
+        "veracruz":
+            "veracruz de ignacio de la llave"
+    }
+
+
+    # ========================================================
+    # BUSCAR NOMBRE DEL GEOJSON
+    # ========================================================
+
+    def obtener_nombre_geo(entidad):
+
+        clave = normalizar_texto(
+            entidad
+        )
+
+        # Coincidencia directa
+
+        if clave in geo_nombres:
+
+            return geo_nombres[clave]
+
+
+        # Equivalencia
+
+        if clave in equivalencias:
+
+            clave_equivalente = (
+                equivalencias[clave]
+            )
+
+            if clave_equivalente in geo_nombres:
+
+                return geo_nombres[
+                    clave_equivalente
+                ]
+
+
+        # Equivalencia inversa
+
+        for origen, destino in equivalencias.items():
+
+            if clave == destino:
+
+                if origen in geo_nombres:
+
+                    return geo_nombres[
+                        origen
+                    ]
+
+
+        return np.nan
+
+
+    # ========================================================
+    # ASIGNAR NOMBRE GEOJSON
+    # ========================================================
+
+    datos["entidad_geo"] = (
+
+        datos["entidad"]
+        .apply(obtener_nombre_geo)
+    )
+
+
+    # ========================================================
+    # VALIDAR ENTIDADES
+    # ========================================================
+
+    faltantes = (
+
+        datos.loc[
+            datos["entidad_geo"].isna(),
+            "entidad"
+        ]
+
+        .drop_duplicates()
+
+        .tolist()
+    )
+
+
+    if faltantes:
+
+        print(
+            "Entidades no encontradas en GeoJSON:"
+        )
+
+        for entidad in faltantes:
+
+            print(
+                "-",
+                entidad
+            )
+
+
+    # Eliminar únicamente registros sin geometría
+
+    datos = datos.dropna(
+        subset=["entidad_geo"]
+    )
+
+
+    # ========================================================
+    # CALCULAR CENTROIDES
+    # ========================================================
 
     centroides = {}
 
     for feature in mx_geo["features"]:
 
-        nombre = feature["properties"]["name"]
-
-        poligono = shape(feature["geometry"])
-
-        centro = poligono.centroid
-
-        centroides[nombre] = (
-            centro.x,
-            centro.y
+        nombre = (
+            feature["properties"]["name"]
         )
 
-    df["lon"] = df["entidad"].map(
-        lambda e: centroides[e][0]
+        geometria = shape(
+            feature["geometry"]
+        )
+
+        punto = (
+            geometria
+            .representative_point()
+        )
+
+        centroides[nombre] = (
+            punto.x,
+            punto.y
+        )
+
+
+    # ========================================================
+    # AGREGAR COORDENADAS
+    # ========================================================
+
+    datos["lon"] = (
+
+        datos["entidad_geo"]
+        .map(
+            lambda x:
+            centroides[x][0]
+        )
     )
 
-    df["lat"] = df["entidad"].map(
-        lambda e: centroides[e][1]
+
+    datos["lat"] = (
+
+        datos["entidad_geo"]
+        .map(
+            lambda x:
+            centroides[x][1]
+        )
     )
 
-    datos={}
+
+    # ========================================================
+    # TAMAÑO GLOBAL DE LOS CÍRCULOS
+    # ========================================================
+
+    afiliados_max = (
+        datos["afiliados"]
+        .max()
+    )
+
+
+    if (
+        pd.isna(afiliados_max)
+        or afiliados_max <= 0
+    ):
+
+        datos["tamano"] = 8
+
+    else:
+
+        datos["tamano"] = (
+
+            np.sqrt(
+                datos["afiliados"]
+                .fillna(0)
+                /
+                afiliados_max
+            )
+
+            * 40
+
+            + 6
+        )
+
+
+    # ========================================================
+    # CLASIFICAR TASA POR AÑO
+    # ========================================================
+
+    datos["categoria_tasa"] = None
+
 
     for anio in ANIOS:
 
-        temp=df.copy()
-
-        casos=f"casos_{anio}"
-
-        poblacion=f"poblacion_{anio}"
-
-        tasa=f"tasa_{anio}"
-
-        rr=f"riesgo_relativo_{anio}"
-    
-        temp["categoria_tasa"]=clasificar_tasa(temp[tasa])
-
-        temp["nivel_tasa"]=(
-            temp["categoria_tasa"]
-            .map(NIVEL_TASA)
+        mascara = (
+            datos["anio"] == anio
         )
 
-        temp["categoria_rr"]=clasificar_rr(temp[rr])
+        datos.loc[
+            mascara,
+            "categoria_tasa"
+        ] = clasificar_tasa(
 
-        temp["nivel_rr"]=(
-            temp["categoria_rr"]
-            .map(NIVEL_RR)
+            datos.loc[
+                mascara,
+                "tasa"
+            ]
         )
 
-        temp["tamano"]=escalar_poblacion(
-            temp[poblacion]
+
+    datos["nivel_tasa"] = (
+
+        datos["categoria_tasa"]
+        .map(NIVEL_TASA)
+    )
+
+
+    # ========================================================
+    # CREAR HOVER PARA TASA
+    # ========================================================
+
+    datos["hover_tasa"] = (
+
+        "<b>"
+        + datos["entidad"]
+        + "</b>"
+
+        + "<br>Año: "
+        + datos["anio"].astype(str)
+
+        + "<br><br>Casos detectados: "
+        + datos["casos"].map(
+            lambda x:
+            f"{x:,.0f}"
+            if pd.notna(x)
+            else "Sin datos"
         )
 
-        temp["hover_tasa"]=(
-
-            "<b>"+temp["entidad"]+"</b>"
-
-            +"<br><br>"
-
-            +"Casos: "
-
-            +temp[casos].map("{:,.0f}".format)
-
-            +"<br>Población: "
-
-            +temp[poblacion].map("{:,.0f}".format)
-
-            +"<br>Tasa: "
-
-            +temp[tasa].map("{:.2f}".format)
-
-            +"<br><b>Nivel: "
-
-            +temp["categoria_tasa"]
-
-            +"</b>"
-
+        + "<br>Afiliados IMSS: "
+        + datos["afiliados"].map(
+            lambda x:
+            f"{x:,.0f}"
+            if pd.notna(x)
+            else "Sin datos"
         )
 
-        temp["hover_rr"]=(
-
-            "<b>"+temp["entidad"]+"</b>"
-
-            +"<br><br>"
-
-            +"Casos: "
-
-            +temp[casos].map("{:,.0f}".format)
-
-            +"<br>Población: "
-
-            +temp[poblacion].map("{:,.0f}".format)
-
-            +"<br>RR: "
-
-            +temp[rr].map("{:.3f}".format)
-
-            +"<br><b>Nivel: "
-
-            +temp["categoria_rr"]
-
-            +"</b>"
-
+        + "<br><b>Tasa bruta: </b>"
+        + datos["tasa"].map(
+            lambda x:
+            f"{x:,.2f}"
+            if pd.notna(x)
+            else "Sin datos"
         )
 
-        temp.attrs["stats"]={
+        + " por 100,000 afiliados"
 
-            "tasa":{
+        + "<br>Nivel: "
+        + datos["categoria_tasa"]
+        .fillna("Sin datos")
+    )
 
-                "media":temp[tasa].mean(),
 
-                "mediana":temp[tasa].median(),
+    # ========================================================
+    # CREAR HOVER PARA RDI
+    # ========================================================
 
-                "min":temp[tasa].min(),
+    datos["hover_rdi"] = (
 
-                "max":temp[tasa].max()
+        "<b>"
+        + datos["entidad"]
+        + "</b>"
 
-            },
+        + "<br>Año: "
+        + datos["anio"].astype(str)
 
-            "rr":{
+        + "<br><br>Casos detectados: "
+        + datos["casos"].map(
+            lambda x:
+            f"{x:,.0f}"
+            if pd.notna(x)
+            else "Sin datos"
+        )
 
-                "media":temp[rr].mean(),
+        + "<br>Afiliados IMSS: "
+        + datos["afiliados"].map(
+            lambda x:
+            f"{x:,.0f}"
+            if pd.notna(x)
+            else "Sin datos"
+        )
 
-                "mediana":temp[rr].median(),
+        + "<br>Tasa estatal: "
+        + datos["tasa"].map(
+            lambda x:
+            f"{x:,.2f}"
+            if pd.notna(x)
+            else "Sin datos"
+        )
 
-                "min":temp[rr].min(),
+        + "<br>Tasa nacional: "
+        + datos["tasa_nacional"].map(
+            lambda x:
+            f"{x:,.2f}"
+            if pd.notna(x)
+            else "Sin datos"
+        )
 
-                "max":temp[rr].max()
+        + "<br><b>RDI: </b>"
+        + datos["rdi"].map(
+            lambda x:
+            f"{x:.3f}"
+            if pd.notna(x)
+            else "Sin datos"
+        )
 
-            }
+        + "<br>"
+        + datos["categoria_rdi"]
+        .fillna("Sin datos")
+    )
 
-        }
 
-        datos[anio]=temp
+    # ========================================================
+    # CREAR DICCIONARIO POR AÑO
+    # ========================================================
+
+    datos_por_anio = {}
+
+
+    for anio in ANIOS:
+
+        datos_por_anio[anio] = (
+
+            datos[
+                datos["anio"] == anio
+            ]
+
+            .copy()
+
+            .reset_index(drop=True)
+        )
+
+
+    # ========================================================
+    # REGRESAR DATOS
+    # ========================================================
 
     return {
-    "datos": datos,
-    "geojson": mx_geo
+
+        "datos":
+            datos,
+
+        "datos_por_anio":
+            datos_por_anio,
+
+        "nacional":
+            nacional,
+
+        "geojson":
+            mx_geo,
+
+        "anios":
+            ANIOS
     }
