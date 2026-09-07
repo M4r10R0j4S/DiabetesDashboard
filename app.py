@@ -62,7 +62,7 @@ indicador = st.sidebar.radio(
     "Indicador",
     [
         "Tasa de detección",
-        "Índice relativo de tasa de detección (RDI)"
+        "Índice relativo de tasa de detección (IRD)"
     ]
 )
 
