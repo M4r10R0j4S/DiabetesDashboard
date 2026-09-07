@@ -1,4 +1,4 @@
-﻿entidad,casos_2000,casos_2010,casos_2020,afiliados_2000,afiliados_2010,afiliados_2020,tasa_2000,tasa_2010,tasa_2020,Delta_T_2000,Delta_T_2010,Riesgo_relativo_2020,Riesgo_relativo_2010,Riesgo_relativo_2000
+﻿entidad,casos_2000,casos_2010,casos_2020,poblacion_2000,poblacion_2010,poblacion_2020,tasa_2000,tasa_2010,tasa_2020,Delta_T_2000,Delta_T_2010,riesgo_relativo_2000,riesgo_relativo_2010,riesgo_relativo_2020
 Aguascalientes,67543,178663,86265,181598,206272,327624,37193.7,86615.2,26330.5,-29.2,-69.6,0.9,1.4,0.7
 Baja California,122240,319744,240628,591396,605982,913425,20669.7,52764.6,26343.5,27.4,-50.1,0.5,0.9,0.7
 Baja California Sur,29843,94018,55146,79481,115165,172156,37547.3,81637.7,32032.6,-14.7,-60.8,0.9,1.4,0.9
