@@ -22,7 +22,7 @@ from shapely.geometry import shape
 # CONFIGURACIÓN
 # =====================================================
 
-CSV_FILE = "deteccion_diabetes_resumen_2.csv"
+CSV_FILE = "deteccion_diabetes_resumen.csv"
 
 GEOJSON_URL = (
     "https://raw.githubusercontent.com/"
