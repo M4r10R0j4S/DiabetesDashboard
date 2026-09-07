@@ -1,16 +1,28 @@
 import plotly.graph_objects as go
+
 from config import COLORS_TASA, COLORS_RR
 
-def crear_mapa(df,geojson,indicador):
-    
-    if indicador=="Tasa de detección":
 
-        z=df["nivel_tasa"]
+# ============================================================
+# FUNCIÓN PARA CREAR MAPA
+# ============================================================
 
-        hover=df["hover_tasa"]
+def crear_mapa(df, geojson, indicador):
 
-        titulo="Tasa de detección"
-        
+    # ========================================================
+    # CONFIGURACIÓN SEGÚN INDICADOR
+    # ========================================================
+
+    if indicador == "Tasa de detección":
+
+        z = df["nivel_tasa"]
+
+        hover = df["hover_tasa"]
+
+        titulo = (
+            "Tasa de detección de diabetes"
+        )
+
         colorscale = COLORS_TASA
 
         ticktext = [
@@ -21,34 +33,46 @@ def crear_mapa(df,geojson,indicador):
             "Muy alto"
         ]
 
-    else:
 
-        z=df["nivel_rdi"]
+    elif indicador == "Índice relativo de tasa de detección (RDI)":
 
-        hover=df["hover_rdi"]
+        z = df["nivel_rdi"]
 
-        titulo="Riesgo relativo"
-        
+        hover = df["hover_rdi"]
+
+        titulo = (
+            "Índice relativo de tasa de detección (RDI)"
+        )
+
         colorscale = COLORS_RR
 
         ticktext = [
-            "Muy bajo",
-            "Bajo",
-            "Promedio",
-            "Alto",
-            "Muy alto"
+            "Muy por debajo",
+            "Por debajo",
+            "Similar",
+            "Por encima",
+            "Muy por encima"
         ]
-    
-     # =====================================
-    # Crear figura
-    # =====================================      
 
-    fig=go.Figure()
 
-     # =====================================
-    # Choropleth
-    # =====================================
-    
+    else:
+
+        raise ValueError(
+            f"Indicador no reconocido: {indicador}"
+        )
+
+
+    # ========================================================
+    # CREAR FIGURA
+    # ========================================================
+
+    fig = go.Figure()
+
+
+    # ========================================================
+    # MAPA COROPLÉTICO
+    # ========================================================
+
     fig.add_trace(
 
         go.Choropleth(
@@ -57,7 +81,7 @@ def crear_mapa(df,geojson,indicador):
 
             featureidkey="properties.name",
 
-            locations=df["entidad"],
+            locations=df["entidad_geo"],
 
             z=z,
 
@@ -73,20 +97,38 @@ def crear_mapa(df,geojson,indicador):
 
             customdata=hover,
 
-            hovertemplate="%{customdata}<extra></extra>",
-            
+            hovertemplate=(
+                "%{customdata}"
+                "<extra></extra>"
+            ),
+
             colorbar=dict(
 
                 title=titulo,
 
-                tickvals=[1,2,3,4,5],
+                tickvals=[
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
 
-                ticktext=ticktext
+                ticktext=ticktext,
+
+                thickness=18,
+
+                len=0.70,
+
+                outlinewidth=0
             )
-
         )
-
     )
+
+
+    # ========================================================
+    # CÍRCULOS DE AFILIADOS
+    # ========================================================
 
     fig.add_trace(
 
@@ -105,51 +147,60 @@ def crear_mapa(df,geojson,indicador):
                 color="royalblue",
 
                 opacity=0.55
-
             ),
 
             customdata=hover,
 
-            hovertemplate="%{customdata}<extra></extra>",
+            hovertemplate=(
+                "%{customdata}"
+                "<extra></extra>"
+            ),
 
-            showlegend=False
+            name="Afiliados al IMSS",
 
+            showlegend=True
         )
-
     )
+
+
+    # ========================================================
+    # CONFIGURACIÓN GEOGRÁFICA
+    # ========================================================
 
     fig.update_geos(
 
         fitbounds="locations",
 
-        visible=False
+        visible=False,
 
+        projection_type="mercator"
     )
+
+
+    # ========================================================
+    # DISEÑO
+    # ========================================================
 
     fig.update_layout(
 
         height=700,
 
         margin=dict(
-
             l=0,
-
             r=0,
-
-            t=60,
-
+            t=70,
             b=0
-
         ),
 
         title=dict(
 
             text=titulo,
 
-            x=0.5
+            x=0.5,
 
+            xanchor="center"
         )
-
     )
+
 
     return fig
