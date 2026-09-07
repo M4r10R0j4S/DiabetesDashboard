@@ -23,9 +23,9 @@ def crear_mapa(df,geojson,indicador):
 
     else:
 
-        z=df["nivel_rr"]
+        z=df["nivel_rdi"]
 
-        hover=df["hover_rr"]
+        hover=df["hover_rdi"]
 
         titulo="Riesgo relativo"
         
