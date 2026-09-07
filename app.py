@@ -67,7 +67,11 @@ st.sidebar.caption(
     "Los círculos representan el tamaño de la población."
 )
 
-df = datos[anio]
+# ============================================================
+# DATOS DEL AÑO SELECCIONADO
+# ============================================================
+
+df = datos_por_anio[anio]
 
 fig = crear_mapa(
     df,
