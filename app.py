@@ -81,17 +81,20 @@ st.sidebar.markdown(
     """
 )
 
-
 st.sidebar.caption(
-    "Los círculos representan el número de afiliados al IMSS."
+    "NOTAS:"
 )
 
 st.sidebar.caption(
-    "La tasa detección (cruda) corresponde al número de detecciones de diabetes por cada 100,000 trabajadores afiliados al IMSS en cada entidad y año."
+    "*Los círculos representan el número de afiliados al IMSS."
 )
 
 st.sidebar.caption(
-    "El índice relativo de tasa de detección (IRD) compara la tasa cruda de cada entidad con la tasa nacional, calculada a partir del total de detecciones y trabajadores afiliados de las 32 entidades."
+    "*La tasa detección (cruda) corresponde al número de detecciones de diabetes por cada 100,000 trabajadores afiliados al IMSS en cada entidad y año."
+)
+
+st.sidebar.caption(
+    "*El índice relativo de tasa de detección (IRD) compara la tasa cruda de cada entidad con la tasa nacional, calculada a partir del total de detecciones y trabajadores afiliados de las 32 entidades."
 )
 
 
