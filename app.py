@@ -21,18 +21,19 @@ st.write("Dashboard epidemiológico")
 dataset = cargar_datos()
 
 datos = dataset["datos"]
-
+datos_por_anio = dataset["datos_por_anio"]
+nacional = dataset["nacional"]
 geojson = dataset["geojson"]
+anios = dataset["anios"]
 
 st.sidebar.header("Filtros")
 
 anio = st.sidebar.selectbox(
-
     "Seleccione el año",
-
-    [2000,2010,2020]
-
+    anios
 )
+
+df = datos_por_anio[anio]
 
 indicador = st.sidebar.radio(
 
@@ -46,7 +47,7 @@ indicador = st.sidebar.radio(
 
         "Tasa de detección",
 
-        "Riesgo Relativo"
+        "Índice relativo de tasa de detección (RDI)"
 
     ]
 
