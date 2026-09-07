@@ -937,7 +937,7 @@ def cargar_datos():
             else "Sin datos"
         )
 
-        + "<br><b>RDI: </b>"
+        + "<br><b>IRD: </b>"
         + datos["rdi"].map(
             lambda x:
             f"{x:.3f}"
