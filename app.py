@@ -87,11 +87,11 @@ st.sidebar.caption(
 )
 
 st.sidebar.caption(
-    "La tasa cruda de detección se obtiene dividiendo el número de detecciones de diabetes registradas por el IMSS en una entidad y año determinados entre el número promedio anual de trabajadores afiliados al IMSS de esa misma entidad y año, multiplicado por 100,000."
+    "La tasa detección (cruda) corresponde al número de detecciones de diabetes por cada 100,000 trabajadores afiliados al IMSS en cada entidad y año."
 )
 
 st.sidebar.caption(
-    "El índice relativo de tasa de detección compara la tasa cruda de cada entidad con la tasa cruda nacional. La tasa nacional se calcula a partir de la suma de las detecciones y la suma de los trabajadores afiliados de las 32 entidades, no mediante la suma o promedio de las tasas estatales."
+    "El índice relativo de tasa de detección (IRD) compara la tasa cruda de cada entidad con la tasa nacional, calculada a partir del total de detecciones y trabajadores afiliados de las 32 entidades."
 )
 
 
