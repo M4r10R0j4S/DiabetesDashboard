@@ -40,9 +40,13 @@ indicador = st.sidebar.radio(
 
     [
 
-        "Tasa de detección bruta por 100,000 afiliados al IMSS",
+        #"Tasa de detección bruta por 100,000 afiliados al IMSS",
 
-        "Índice de tasa de detección relativa"
+        #"Índice de tasa de detección relativa"
+
+        "Tasa de detección",
+
+        "Riesgo Relativo"
 
     ]
 
