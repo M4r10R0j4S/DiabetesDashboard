@@ -64,7 +64,7 @@ st.sidebar.markdown(
 )
 
 st.sidebar.caption(
-    "Los círculos representan el tamaño de la población."
+    "Los círculos representan el número de afiliados al IMSS."
 )
 
 # ============================================================
