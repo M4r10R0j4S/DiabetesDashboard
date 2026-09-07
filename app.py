@@ -9,7 +9,7 @@ from data_loader import cargar_datos
 # ============================================================
 
 st.set_page_config(
-    page_title="Diabetes en México",
+    page_title="Diabetes en México)",
     page_icon="🩺",
     layout="wide"
 )
@@ -19,9 +19,9 @@ st.set_page_config(
 # TÍTULO
 # ============================================================
 
-st.title("🩺 Diabetes en México")
+st.title("🩺 Evolución de la Diabetes en México (2000-2020)")
 
-st.write("Dashboard epidemiológico")
+st.write("Dashboard epidemiológico basado en datos de trabajadores afiliados al Instituto Mexicano del Seguro Social")
 
 
 # ============================================================
