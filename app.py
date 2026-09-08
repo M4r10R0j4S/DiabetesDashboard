@@ -3,7 +3,12 @@ import streamlit as st
 from maps import crear_mapa
 from data_loader import cargar_datos
 
+import streamlit as st
 
+st.sidebar.image(
+    "IPN_Logo_PNG1.png",
+    width=180
+)
 # ============================================================
 # CONFIGURACIÓN DE LA PÁGINA
 # ============================================================
