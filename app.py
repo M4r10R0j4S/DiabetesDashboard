@@ -4,6 +4,7 @@ from maps import crear_mapa
 from data_loader import cargar_datos
 import streamlit as st
 
+st.warning("This is a warning message!", icon="⚠️")
 
 # ============================================================
 # CONFIGURACIÓN DE LA PÁGINA
