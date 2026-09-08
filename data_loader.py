@@ -230,35 +230,6 @@ NIVEL_RDI = {
     "Muy por encima del nacional": 5
 }
 
-# ============================================================
-# CLASIFICAR CAMBIO PORCENTUAL
-# ============================================================
-
-def clasificar_cambio(valor):
-
-    if pd.isna(valor):
-
-        return "Sin datos"
-
-    elif valor < -25:
-
-        return "Disminución alta"
-
-    elif valor < 0:
-
-        return "Disminución"
-
-    elif valor == 0:
-
-        return "Sin cambio"
-
-    elif valor <= 25:
-
-        return "Incremento"
-
-    else:
-
-        return "Incremento alto"
 
 # ============================================================
 # FUNCIÓN PRINCIPAL
@@ -602,70 +573,7 @@ def cargar_datos():
         .map(NIVEL_RDI)
     )
 
-# ============================================================
-# CAMBIO PORCENTUAL DE LA TASA RESPECTO AL AÑO 2000
-# ============================================================
 
-# Obtener la tasa de cada entidad en el año 2000
-
-tasa_base_2000 = (
-
-    datos[
-        datos["anio"] == 2000
-    ][
-        [
-            "clave_entidad",
-            "tasa"
-        ]
-    ]
-
-    .rename(
-        columns={
-            "tasa": "tasa_2000"
-        }
-    )
-)
-
-
-# Agregar la tasa base de 2000 a todos los años
-
-datos = pd.merge(
-
-    datos,
-
-    tasa_base_2000,
-
-    on="clave_entidad",
-
-    how="left"
-)
-
-
-# Calcular cambio porcentual respecto a 2000
-
-datos["cambio_pct_2000"] = np.where(
-
-    datos["tasa_2000"] > 0,
-
-    (
-        (
-            datos["tasa"]
-            -
-            datos["tasa_2000"]
-        )
-        /
-        datos["tasa_2000"]
-    )
-    * 100,
-
-    np.nan
-)
-
-datos["categoria_cambio"] = (
-    datos["cambio_pct_2000"]
-    .apply(clasificar_cambio)
-)
-    
     # ========================================================
     # DESCARGAR GEOJSON
     # ========================================================
@@ -1042,46 +950,6 @@ datos["categoria_cambio"] = (
         .fillna("Sin datos")
     )
 
-# ============================================================
-# HOVER DEL CAMBIO PORCENTUAL RESPECTO A 2000
-# ============================================================
-
-datos["hover_cambio"] = (
-
-    "<b>"
-    + datos["entidad"]
-    + "</b>"
-
-    + "<br>Año: "
-    + datos["anio"].astype(str)
-
-    + "<br><br>Tasa en 2000: "
-    + datos["tasa_2000"].map(
-        lambda x:
-        f"{x:,.2f}"
-        if pd.notna(x)
-        else "Sin datos"
-    )
-
-    + "<br>Tasa en el año seleccionado: "
-    + datos["tasa"].map(
-        lambda x:
-        f"{x:,.2f}"
-        if pd.notna(x)
-        else "Sin datos"
-    )
-
-    + "<br><b>Cambio respecto a 2000: </b>"
-    + datos["cambio_pct_2000"].map(
-        lambda x:
-        f"{x:+.2f}%"
-        if pd.notna(x)
-        else "Sin datos"
-    )
-
-    + "<br>"
-    + datos["categoria_cambio"]
-)
 
     # ========================================================
     # CREAR DICCIONARIO POR AÑO
