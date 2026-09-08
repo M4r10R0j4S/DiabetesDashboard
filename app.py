@@ -78,7 +78,7 @@ st.sidebar.markdown(
 
     Seleccione un año y un indicador para explorar
     la distribución geográfica de la detección de
-    diabetes en México.
+    diabetes en México. Esta información esta basada en los datos anuales de detecciones del seguro y cantidad de afiliados al IMSS.
     """
 )
 
