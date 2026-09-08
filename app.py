@@ -4,7 +4,7 @@ from maps import crear_mapa
 from data_loader import cargar_datos
 import streamlit as st
 
-st.warning("This is a warning message!", icon="⚠️")
+st.warning("Advertencia: Los indicadores se basan en población afiliada al IMSS y no representan a toda la población. Una tasa baja puede reflejar diferencias en la cobertura del IMSS y el empleo informal, por lo que no debe interpretarse como un menor riesgo de diabetes.", icon="⚠️")
 
 # ============================================================
 # CONFIGURACIÓN DE LA PÁGINA
