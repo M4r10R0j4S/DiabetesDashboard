@@ -22,7 +22,7 @@ st.set_page_config(
 
 st.title("🩺 Evolución de la Diabetes en México (2000-2020)")
 
-st.write("Dashboard epidemiológico basado en datos de trabajadores afiliados al Instituto Mexicano del Seguro Social")
+st.write("Dashboard epidemiológico basado en los datos anuales de detecciones del Instituto Mexicano del Seguro Social (IMSS) y su cantidad de afiliados.")
 
 
 # ============================================================
@@ -78,7 +78,7 @@ st.sidebar.markdown(
 
     Seleccione un año y un indicador para explorar
     la distribución geográfica de la detección de
-    diabetes en México. Esta información esta basada en los datos anuales de detecciones del seguro y cantidad de afiliados al IMSS.
+    diabetes en México.
     """
 )
 
