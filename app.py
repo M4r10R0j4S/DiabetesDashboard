@@ -103,7 +103,7 @@ st.sidebar.markdown(
     """
     <div style="
         text-align: center;
-        font-size: 14px;
+        font-size: 10px;
         color: gray;
     ">
         Desarrollado por el grupo de sistemas biofísicos, Posgrado en Ingeniería de Sistemas, ESIME-IPN, CDMX
