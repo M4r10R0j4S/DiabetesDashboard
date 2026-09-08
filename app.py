@@ -2,13 +2,9 @@ import streamlit as st
 
 from maps import crear_mapa
 from data_loader import cargar_datos
-
 import streamlit as st
 
-st.sidebar.image(
-    "IPN_Logo_PNG1.png",
-    width=180
-)
+
 # ============================================================
 # CONFIGURACIÓN DE LA PÁGINA
 # ============================================================
@@ -103,6 +99,25 @@ st.sidebar.caption(
 )
 
 
+st.sidebar.markdown(
+    """
+    <div style="
+        text-align: center;
+        font-size: 14px;
+        color: gray;
+    ">
+        Desarrollado por el grupo de sistemas biofísicos, Posgrado en Ingeniería de Sistemas, ESIME-IPN, CDMX
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+st.sidebar.image(
+    "IPN_Logo_PNG1.png",
+    width=180
+)
+
+
+
 # ============================================================
 # DATOS DEL AÑO SELECCIONADO
 # ============================================================
@@ -129,3 +144,4 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
+
