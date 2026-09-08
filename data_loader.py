@@ -971,6 +971,153 @@ def cargar_datos():
             .reset_index(drop=True)
         )
 
+    # ========================================================
+# CAMBIO PORCENTUAL DE LA TASA 2000 - 2020
+# ========================================================
+
+datos_2000 = (
+
+    datos[
+        datos["anio"] == 2000
+    ][
+        [
+            "entidad",
+            "entidad_geo",
+            "tasa",
+            "lon",
+            "lat"
+        ]
+    ]
+
+    .copy()
+
+    .rename(
+        columns={
+            "tasa": "tasa_2000"
+        }
+    )
+)
+
+
+datos_2020 = (
+
+    datos[
+        datos["anio"] == 2020
+    ][
+        [
+            "entidad",
+            "tasa",
+            "afiliados",
+            "tamano"
+        ]
+    ]
+
+    .copy()
+
+    .rename(
+        columns={
+            "tasa": "tasa_2020",
+            "afiliados": "afiliados_2020"
+        }
+    )
+)
+
+
+# ========================================================
+# UNIR 2000 Y 2020
+# ========================================================
+
+cambio_2000_2020 = pd.merge(
+
+    datos_2000,
+
+    datos_2020,
+
+    on="entidad",
+
+    how="inner"
+)
+
+
+# ========================================================
+# CAMBIO ABSOLUTO DE LA TASA
+# ========================================================
+
+cambio_2000_2020["delta_tasa"] = (
+
+    cambio_2000_2020["tasa_2020"]
+    -
+    cambio_2000_2020["tasa_2000"]
+)
+
+
+# ========================================================
+# CAMBIO PORCENTUAL
+# ========================================================
+
+cambio_2000_2020["cambio_pct"] = np.where(
+
+    cambio_2000_2020["tasa_2000"] > 0,
+
+    (
+        (
+            cambio_2000_2020["tasa_2020"]
+            -
+            cambio_2000_2020["tasa_2000"]
+        )
+        /
+        cambio_2000_2020["tasa_2000"]
+    )
+    * 100,
+
+    np.nan
+)
+
+
+# ========================================================
+# HOVER DEL CAMBIO
+# ========================================================
+
+cambio_2000_2020["hover_cambio"] = (
+
+    "<b>"
+    + cambio_2000_2020["entidad"]
+    + "</b>"
+
+    + "<br><br>Tasa 2000: "
+    + cambio_2000_2020["tasa_2000"].map(
+        lambda x:
+        f"{x:,.2f}"
+        if pd.notna(x)
+        else "Sin datos"
+    )
+
+    + "<br>Tasa 2020: "
+    + cambio_2000_2020["tasa_2020"].map(
+        lambda x:
+        f"{x:,.2f}"
+        if pd.notna(x)
+        else "Sin datos"
+    )
+
+    + "<br>Cambio absoluto: "
+    + cambio_2000_2020["delta_tasa"].map(
+        lambda x:
+        f"{x:+,.2f}"
+        if pd.notna(x)
+        else "Sin datos"
+    )
+
+    + "<br><b>Cambio porcentual: "
+    + cambio_2000_2020["cambio_pct"].map(
+        lambda x:
+        f"{x:+.1f}%"
+        if pd.notna(x)
+        else "Sin datos"
+    )
+
+    + "</b>"
+)
 
     # ========================================================
     # REGRESAR DATOS
@@ -983,6 +1130,8 @@ def cargar_datos():
 
         "datos_por_anio":
             datos_por_anio,
+
+        "cambio_2000_2020": cambio_2000_2020,
 
         "nacional":
             nacional,
