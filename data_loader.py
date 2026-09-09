@@ -124,7 +124,7 @@ def convertir_numerico(serie):
 # CLASIFICACIÓN DEL RDI
 # ============================================================
 
-def clasificar_rdi(valor):
+def clasificar_rdi_old(valor):
 
     if pd.isna(valor):
 
@@ -149,6 +149,33 @@ def clasificar_rdi(valor):
     else:
 
         return "Muy por encima del nacional"
+
+
+def clasificar_rdi(valor):
+
+    if pd.isna(valor):
+
+        return "Sin datos"
+
+#    if valor < 0.80:
+
+#        return "Muy por debajo del nacional"
+
+    if valor < 0.95:
+
+        return "Por debajo del nacional"
+
+    elif valor <= 1.05:
+
+        return "Similar al nacional"
+
+#    elif valor <= 1.20:
+
+#        return "Por encima del nacional"
+
+    else:
+
+        return "Por encima del nacional"
 
 
 # ============================================================
