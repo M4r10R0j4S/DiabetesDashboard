@@ -230,6 +230,19 @@ NIVEL_RDI = {
     "Muy por encima del nacional": 5
 }
 
+NIVEL_RDI = {
+
+#    "Muy por debajo del nacional": 1,
+
+    "Por debajo del nacional": 1,
+
+    "Similar al nacional": 2,
+
+    "Por encima del nacional": 3,
+
+#    "Muy por encima del nacional": 5
+}
+
 
 # ============================================================
 # FUNCIÓN PRINCIPAL
