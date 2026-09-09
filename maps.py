@@ -33,13 +33,22 @@ def crear_mapa(df,geojson,indicador):
         
         colorscale = COLORS_RR
 
+        zmin = 0.5
+        zmax = 3.5
+        tickvals = [1, 2, 3]
         ticktext = [
-            "Muy bajo",
-            "Bajo",
-            "Promedio",
-            "Alto",
-            "Muy alto"
+            "Below national rate",
+            "Similar to national rate",
+            "Above national rate"
         ]
+
+        #ticktext = [
+         #   "Muy bajo",
+         #   "Bajo",
+         #   "Promedio",
+         #   "Alto",
+         #   "Muy alto"
+        #]
     
      # =====================================
     # Crear figura
@@ -62,10 +71,12 @@ def crear_mapa(df,geojson,indicador):
             locations=df["entidad"],
 
             z=z,
+            zmin=zmin,
+            zmax=zmax,
+            
+            #zmin=1,
 
-            zmin=1,
-
-            zmax=5,
+            #zmax=5,
 
             colorscale=colorscale,
 
@@ -80,8 +91,8 @@ def crear_mapa(df,geojson,indicador):
             colorbar=dict(
 
                 title=titulo,
-
-                tickvals=[1,2,3,4,5],
+                tickvals=tickvals,
+                #tickvals=[1,2,3,4,5],
 
                 ticktext=ticktext
             )
