@@ -157,21 +157,13 @@ def clasificar_rdi(valor):
 
         return "Sin datos"
 
-#    if valor < 0.80:
-
-#        return "Muy por debajo del nacional"
-
-    if valor < 0.95:
+    elif valor < 0.95:
 
         return "Por debajo del nacional"
 
     elif valor <= 1.05:
 
         return "Similar al nacional"
-
-    elif valor > 1.5:
-
-        return "Por encima del nacional"
 
     else:
 
@@ -244,7 +236,7 @@ NIVEL_TASA = {
 }
 
 
-NIVEL_RDI = {
+NIVEL_RDI_old = {
 
     "Muy por debajo del nacional": 1,
 
@@ -258,16 +250,9 @@ NIVEL_RDI = {
 }
 
 NIVEL_RDI = {
-
-#    "Muy por debajo del nacional": 1,
-
     "Por debajo del nacional": 1,
-
     "Similar al nacional": 2,
-
-    "Por encima del nacional": 3,
-
-#    "Muy por encima del nacional": 5
+    "Por encima del nacional": 3
 }
 
 
