@@ -169,9 +169,9 @@ def clasificar_rdi(valor):
 
         return "Similar al nacional"
 
-#    elif valor <= 1.20:
+    elif valor > 1.5:
 
-#        return "Por encima del nacional"
+        return "Por encima del nacional"
 
     else:
 
