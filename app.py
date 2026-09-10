@@ -2,18 +2,30 @@ import streamlit as st
 
 from maps import crear_mapa
 from data_loader import cargar_datos
-import streamlit as st
 
-st.warning("Advertencia: Los indicadores se basan en población afiliada al IMSS y no representan a toda la población. Una tasa baja puede reflejar diferencias en la cobertura del IMSS y el empleo informal, por lo que no debe interpretarse como un menor riesgo de diabetes.", icon="⚠️")
 
 # ============================================================
 # CONFIGURACIÓN DE LA PÁGINA
 # ============================================================
 
 st.set_page_config(
-    page_title="Diabetes en México)",
+    page_title="Diabetes en México",
     page_icon="🩺",
     layout="wide"
+)
+
+
+# ============================================================
+# ADVERTENCIA
+# ============================================================
+
+st.warning(
+    "Advertencia: Los indicadores se basan en población afiliada "
+    "al IMSS y no representan a toda la población. Una tasa baja "
+    "puede reflejar diferencias en la cobertura del IMSS y el empleo "
+    "informal, por lo que no debe interpretarse como un menor riesgo "
+    "de diabetes.",
+    icon="⚠️"
 )
 
 
@@ -21,9 +33,13 @@ st.set_page_config(
 # TÍTULO
 # ============================================================
 
-st.title("🩺 Evolución de la Diabetes en México (2000-2020)")
+st.title("🩺 Evolución de la Diabetes en México (2000–2020)")
 
-st.write("Dashboard epidemiológico basado en los datos anuales de detecciones del Instituto Mexicano del Seguro Social (IMSS) y su cantidad de afiliados.")
+st.write(
+    "Dashboard epidemiológico basado en los datos anuales de "
+    "detecciones del Instituto Mexicano del Seguro Social (IMSS) "
+    "y el número de trabajadores afiliados."
+)
 
 
 # ============================================================
@@ -60,13 +76,17 @@ anio = st.sidebar.selectbox(
 # SELECTOR DE INDICADOR
 # ============================================================
 
-indicador = st.sidebar.radio(
+opciones_indicador = {
+    "Tasa de detección": "tasa",
+    "Índice relativo de tasa de detección (IRD)": "rdi"
+}
+
+indicador_texto = st.sidebar.radio(
     "Indicador",
-    [
-        "Tasa de detección",
-        "Índice relativo de tasa de detección (IRD)"
-    ]
+    list(opciones_indicador.keys())
 )
+
+indicador = opciones_indicador[indicador_texto]
 
 
 # ============================================================
@@ -83,22 +103,31 @@ st.sidebar.markdown(
     """
 )
 
+
+st.sidebar.caption("NOTAS:")
+
 st.sidebar.caption(
-    "NOTAS:"
+    "• Los círculos representan el número de trabajadores "
+    "afiliados al IMSS."
 )
 
 st.sidebar.caption(
-    "*Los círculos representan el número de afiliados al IMSS."
+    "• La tasa de detección cruda corresponde al número de "
+    "detecciones de diabetes por cada 100,000 trabajadores "
+    "afiliados al IMSS en cada entidad y año."
 )
 
 st.sidebar.caption(
-    "*La tasa detección (cruda) corresponde al número de detecciones de diabetes por cada 100,000 trabajadores afiliados al IMSS en cada entidad y año."
+    "• El índice relativo de tasa de detección (IRD) compara "
+    "la tasa cruda de cada entidad con la tasa nacional, "
+    "calculada a partir del total de detecciones y trabajadores "
+    "afiliados de las 32 entidades."
 )
 
-st.sidebar.caption(
-    "*El índice relativo de tasa de detección (IRD) compara la tasa cruda de cada entidad con la tasa nacional, calculada a partir del total de detecciones y trabajadores afiliados de las 32 entidades."
-)
 
+# ============================================================
+# CRÉDITOS
+# ============================================================
 
 st.sidebar.markdown(
     """
@@ -106,17 +135,21 @@ st.sidebar.markdown(
         text-align: center;
         font-size: 10px;
         color: gray;
+        margin-top: 25px;
     ">
-        Desarrollado por el grupo de sistemas biofísicos, Posgrado en Ingeniería de Sistemas, ESIME-IPN, CDMX
+        Desarrollado por el Grupo de Sistemas Biofísicos,<br>
+        Posgrado en Ingeniería de Sistemas,<br>
+        ESIME-IPN, CDMX
     </div>
     """,
     unsafe_allow_html=True
 )
+
+
 st.sidebar.image(
     "IPN_Logo_PNG1.png",
     width=180
 )
-
 
 
 # ============================================================
@@ -145,4 +178,3 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
-
