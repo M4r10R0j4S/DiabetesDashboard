@@ -9,7 +9,7 @@ def crear_mapa(df, geojson, indicador):
     # TASA DE DETECCIÓN
     # ========================================================
 
-    if indicador == "Tasa de detección":
+    if indicador == "tasa":
 
         z = df["nivel_tasa"]
         hover = df["hover_tasa"]
@@ -33,15 +33,15 @@ def crear_mapa(df, geojson, indicador):
 
 
     # ========================================================
-    # RDI
+    # ÍNDICE RELATIVO DE TASA DE DETECCIÓN
     # ========================================================
 
-    elif indicador == "Índice relativo de tasa de detección (RDI)":
+    elif indicador == "rdi":
 
         z = df["nivel_rdi"]
         hover = df["hover_rdi"]
 
-        titulo = "Índice relativo de tasa de detección (RDI)"
+        titulo = "Índice relativo de tasa de detección (IRD)"
 
         colorscale = COLORS_RR
 
@@ -51,16 +51,20 @@ def crear_mapa(df, geojson, indicador):
         tickvals = [1, 2, 3]
 
         ticktext = [
-            "Below national rate",
-            "Similar to national rate",
-            "Above national rate"
+            "Por debajo de la tasa nacional",
+            "Similar a la tasa nacional",
+            "Por encima de la tasa nacional"
         ]
 
+
+    # ========================================================
+    # INDICADOR NO RECONOCIDO
+    # ========================================================
 
     else:
 
         raise ValueError(
-            f"Indicador no reconocido: {indicador}"
+            f"Indicador no reconocido: {repr(indicador)}"
         )
 
 
